@@ -8,4 +8,4 @@ const esbuild: typeof esbuildWasm = Deno.run === undefined
   ? esbuildWasm
   : esbuildNative;
 
-export { denoPlugin, esbuild };
+export { denoPlugin, esbuild, esbuildWasm as esbuildTypes };

@@ -1,5 +1,3 @@
-/// <reference lib="dom" />
-import { Component } from "./nano_jsx.ts";
 import { esbuildTypes } from "./bundle.ts";
 import { HandlerContext } from "./router.ts";
 import { basename } from "./std.ts";
@@ -16,7 +14,7 @@ export type Context = {
   };
 };
 export type HydrateComponent = {
-  component: Component;
+  code: string;
   parentElementId: string;
   removeChildNodes?: boolean;
 };
@@ -31,18 +29,17 @@ export function makeCode(
 ${importStr}
 ${
     inputs.map((input) => {
-      //export class Counter extends Component\n
-      const code = input.component + "\n";
-      return code +
-        `hydrate(<${/\s*export\s+class\s+(\S+)\s+extends\s+Component\s+/.exec(
-          code,
+      return input.code +
+        `\nhydrate(<${/\s*export\s+class\s+(\S+)\s+extends\s+Component\s+/.exec(
+          input.code,
         )?.[1]} />, document.getElementById("${input.parentElementId}"),${
           input.removeChildNodes == undefined ? true : input.removeChildNodes
         });`;
     }).join("\n")
   }`;
 }
-export function makeRoutes(
+
+export function makeRoute(
   path: string,
   inputs: HydrateComponent[],
   importStr = defaultImport,
@@ -51,7 +48,7 @@ export function makeRoutes(
     path: async (
       req: Request,
       ctx: HandlerContext<Context>,
-      match: Record<string, string>,
+      _match: Record<string, string>,
     ) => {
       const pathname = new URL(req.url).pathname;
       let res: Response | undefined;

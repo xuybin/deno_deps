@@ -53,11 +53,9 @@ export function makeRoute(
     const pathname = new URL(req.url).pathname;
     let res: Response | undefined;
     const headers = new Headers({
-      "content-type": "application/javascript",
+      "content-type": "application/javascript; charset=UTF-8",
     });
-
     const file = ctx.bundle.get(pathname);
-    console.log("file:=" + file?.length);
     if (file) {
       res = new Response(file, {
         status: 200,
@@ -70,7 +68,6 @@ export function makeRoute(
         sourcefile: `${basename(path.replaceAll(":", ""))}.jsx`,
         loader: "jsx",
       });
-      console.log("outputFiles.length=" + buildResult.outputFiles.length);
       if (buildResult.outputFiles.length > 0) {
         ctx.bundle.set(
           pathname,

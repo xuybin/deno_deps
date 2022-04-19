@@ -8,28 +8,29 @@ export const amis = {
   ],
   js: ["https://cdn.bootcdn.net/ajax/libs/amis/1.9.0-beta.12/sdk.min.js"],
 };
+// deno-lint-ignore no-explicit-any
 export const Amis: FC<{ schema: string | Record<string, any> }> = (props) => (
   <div id="root">
     <Helmet>
       <link
         rel="stylesheet"
         type="text/css"
-        href={`"${amis.css[0]}"`}
+        href={amis.css[0]}
       />
       <link
         rel="stylesheet"
         type="text/css"
-        href={`"${amis.css[1]}"`}
+        href={amis.css[1]}
       />
       <link
         rel="stylesheet"
         type="text/css"
-        href={`"${amis.css[2]}"`}
+        href={amis.css[2]}
       />
     </Helmet>
 
     <Helmet footer>
-      <script src={`"${amis.js[0]}"`} />
+      <script src={amis.js[0]} />
       <script type="text/javascript">
         {`
           (function () {

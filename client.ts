@@ -1,5 +1,5 @@
 import { esbuildTypes } from "./bundle.ts";
-import { HandlerContext } from "./router.ts";
+import { HandlerContext, MatchHandler } from "./router.ts";
 import { basename } from "./std.ts";
 
 export type Context = {
@@ -44,48 +44,48 @@ export function makeRoute(
   inputs: HydrateComponent[],
   importStr = defaultImport,
 ) {
-  return {
-    path: async (
-      req: Request,
-      ctx: HandlerContext<Context>,
-      _match: Record<string, string>,
-    ) => {
-      const pathname = new URL(req.url).pathname;
-      let res: Response | undefined;
-      const headers = new Headers({
-        "content-type": "application/javascript",
-      });
+  const result: Record<string, MatchHandler<Context>> = {};
+  result[path] = async (
+    req: Request,
+    ctx: HandlerContext<Context>,
+    _match: Record<string, string>,
+  ) => {
+    const pathname = new URL(req.url).pathname;
+    let res: Response | undefined;
+    const headers = new Headers({
+      "content-type": "application/javascript",
+    });
 
-      const file = ctx.bundle.get(pathname);
-      console.log("file:=" + file?.length);
-      if (file) {
-        res = new Response(file, {
+    const file = ctx.bundle.get(pathname);
+    console.log("file:=" + file?.length);
+    if (file) {
+      res = new Response(file, {
+        status: 200,
+        headers,
+      });
+    } else {
+      const buildResult = await ctx.bundle.build({
+        contents: makeCode(inputs, importStr),
+        resolveDir: Deno.cwd(),
+        sourcefile: `${basename(path.replaceAll(":", ""))}.jsx`,
+        loader: "jsx",
+      });
+      console.log("outputFiles.length=" + buildResult.outputFiles.length);
+      if (buildResult.outputFiles.length > 0) {
+        ctx.bundle.set(
+          pathname,
+          buildResult.outputFiles[0].contents,
+        );
+        res = new Response(ctx.bundle.get(pathname), {
           status: 200,
           headers,
         });
-      } else {
-        const buildResult = await ctx.bundle.build({
-          contents: makeCode(inputs, importStr),
-          resolveDir: Deno.cwd(),
-          sourcefile: `${basename(path.replaceAll(":", ""))}.jsx`,
-          loader: "jsx",
-        });
-        console.log("outputFiles.length=" + buildResult.outputFiles.length);
-        if (buildResult.outputFiles.length > 0) {
-          ctx.bundle.set(
-            pathname,
-            buildResult.outputFiles[0].contents,
-          );
-          res = new Response(ctx.bundle.get(pathname), {
-            status: 200,
-            headers,
-          });
-        }
       }
+    }
 
-      return res ?? new Response(null, {
-        status: 404,
-      });
-    },
+    return res ?? new Response(null, {
+      status: 404,
+    });
   };
+  return result;
 }

@@ -1,4 +1,4 @@
-type HandlerContext<T = unknown> = T & {
+export type HandlerContext<T = unknown> = T & {
   /** The local address of the connection. */
   readonly localAddr: Deno.Addr;
   /** The remote address of the connection. */

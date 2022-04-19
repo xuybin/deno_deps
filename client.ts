@@ -30,7 +30,7 @@ ${importStr}
 ${
     inputs.map((input) => {
       return input.code +
-        `\nhydrate(<${/\s*export\s+class\s+(\S+)\s+extends\s+Component\s+/.exec(
+        `\nhydrate(<${/\s*class\s+(\S+)\s+extends\s+Component\s+/.exec(
           input.code,
         )?.[1]} />, document.getElementById("${input.parentElementId}"),${
           input.removeChildNodes == undefined ? true : input.removeChildNodes

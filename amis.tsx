@@ -8,7 +8,7 @@ export const amis = {
   ],
   js: ["https://cdn.bootcdn.net/ajax/libs/amis/1.9.0-beta.12/sdk.min.js"],
 };
-export const Amis: FC<{ schema?: string | Record<string, any> }> = (props) => (
+export const Amis: FC<{ schema: string | Record<string, any> }> = (props) => (
   <div id="root">
     <Helmet>
       <link

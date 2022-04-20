@@ -25,6 +25,7 @@ class Bundle {
     if (input.contents) {
       stdin = input as esbuildTypes.StdinOptions;
     } else {
+      // deno-lint-ignore no-explicit-any
       const input2 = input as Record<string, any>;
       for (const key in input2) {
         input2[key] = (input as Record<string, URL>)[key].href;

@@ -20,7 +20,7 @@ export type HydrateComponent = {
 };
 
 export const defaultImport =
-  'import {  h, hydrate,Component,Fragment} from "https://crux.land/bin@nano_jsx";';
+  'import {  h, hydrate,Component,Fragment} from "https://crux.land/bin@nano_jsx.ts";';
 export function makeCode(
   inputs: HydrateComponent[],
   importStr = defaultImport,
